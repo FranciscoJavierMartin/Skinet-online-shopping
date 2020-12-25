@@ -1,3 +1,5 @@
+using API.Helpers;
+using AutoMapper;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
@@ -23,8 +25,10 @@ namespace API
     {
 
       services.AddScoped<IProductRepository, ProductRepository>();
+      services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+      services.AddAutoMapper(typeof(MappingProfiles));
       services.AddControllers();
-      services.AddDbContext<StoreContext>(x => 
+      services.AddDbContext<StoreContext>(x =>
         x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
       services.AddSwaggerGen(c =>
       {
@@ -37,7 +41,6 @@ namespace API
     {
       if (env.IsDevelopment())
       {
-        app.UseDeveloperExceptionPage();
         app.UseSwagger();
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
       }
@@ -45,6 +48,7 @@ namespace API
       app.UseHttpsRedirection();
 
       app.UseRouting();
+      app.UseStaticFiles();
 
       app.UseAuthorization();
 
