@@ -6,4 +6,5 @@ export class ShopParams {
   sort: SortTypes = 'name';
   pageNumber: number = 1;
   pageSize: number = 6;
+  search: string;
 }
