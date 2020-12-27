@@ -8,6 +8,7 @@ import { IBrand } from '../shared/interfaces/brand';
 import { IType } from '../shared/interfaces/productType';
 import { SortTypes } from '../shared/custom-types/custom-types';
 import { ShopParams } from '../shared/models/shopParams';
+import { IProduct } from '../shared/interfaces/product';
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +47,10 @@ export class ShopService {
           return response.body;
         })
       );
+  }
+
+  getProduct(id: number): Observable<IProduct> {
+    return this.http.get<IProduct>(`${this.baseUrlShop}/${id}`);
   }
 
   getBrands(): Observable<IBrand[]> {
