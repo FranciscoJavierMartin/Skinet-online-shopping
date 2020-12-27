@@ -6,7 +6,6 @@ import { IProduct } from '../shared/interfaces/product';
 import { ShopService } from './shop.service';
 import { SortTypes } from '../shared/custom-types/custom-types';
 import { ShopParams } from '../shared/models/shopParams';
-import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 
 @Component({
   selector: 'app-shop',
@@ -37,17 +36,9 @@ export class ShopComponent implements OnInit {
     this.shopService.getProducts(this.shopParams).subscribe(
       (response: IPagination) => {
         this.products = response.data;
-        console.log('Previous', {
-          pageNumber: this.shopParams.pageNumber,
-          pageSize: this.shopParams.pageSize,
-        });
         this.shopParams.pageNumber = response.pageIndex;
         this.shopParams.pageSize = response.pageSize;
         this.totalCount = response.count;
-        console.log('After', {
-          pageNumber: this.shopParams.pageNumber,
-          pageSize: this.shopParams.pageSize,
-        });
       },
       (error) => {
         console.log(error);
@@ -82,8 +73,8 @@ export class ShopComponent implements OnInit {
     this.getProducts();
   }
 
-  onPageChanged(event: PageChangedEvent) {
-    this.shopParams.pageNumber = event.page;
+  onPageChanged(pageNumber: number) {
+    this.shopParams.pageNumber = pageNumber;
     this.getProducts();
   }
 }
