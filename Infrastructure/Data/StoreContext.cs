@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Reflection;
 using Core.Entities;
-using Core.OrderAggregate;
+using Core.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data

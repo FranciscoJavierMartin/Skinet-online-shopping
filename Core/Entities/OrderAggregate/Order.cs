@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Core.Entities;
 
-namespace Core.OrderAggregate
+namespace Core.Entities.OrderAggregate
 {
   public class Order : BaseEntity
   {
@@ -10,10 +9,11 @@ namespace Core.OrderAggregate
     {
     }
 
-    public Order(string buyerEmail, 
-        Address shipToAddress, 
-        DeliveryMethod deliveryMethod, 
-        IReadOnlyList<OrderItem> orderItems, 
+    public Order(
+        IReadOnlyList<OrderItem> orderItems,
+        string buyerEmail,
+        Address shipToAddress,
+        DeliveryMethod deliveryMethod,
         decimal subtotal)
     {
       BuyerEmail = buyerEmail;
