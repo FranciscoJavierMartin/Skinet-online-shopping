@@ -2,5 +2,7 @@ obj
 bin
 appsettings.json
 *.db
+*.db-shm
+*.db-wal
 .DS_Store
 dump.rdb
