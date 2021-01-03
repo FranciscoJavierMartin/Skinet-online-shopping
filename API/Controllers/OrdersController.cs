@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Claims;
 using API.Extensions;
 using API.Errors;
+using System.Collections.Generic;
 
 namespace API.Controllers
 {
@@ -35,5 +36,30 @@ namespace API.Controllers
           BadRequest(new ApiResponse(400, "Problem creating order")) :
           Ok(order);
     }
+
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrdersForUser()
+    {
+      var email = HttpContext.User.RetrieveEmailFromPrincipal();
+      var orders = await _orderService.GetOrdersForUserAsync(email);
+      return Ok(_mapper.Map<IReadOnlyList<Order>, IReadOnlyList<OrderToReturnDto>>(orders));
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<OrderToReturnDto>> GetOrderByIdForUser(int id)
+    {
+      var email = HttpContext.User.RetrieveEmailFromPrincipal();
+      var order = await _orderService.GetOrderByIdAsync(id, email);
+      return order == null ?
+         NotFound(new ApiResponse(404)) :
+         _mapper.Map<Order, OrderToReturnDto>(order);
+    }
+
+    [HttpGet("deliveryMethods")]
+    public async Task<ActionResult<IReadOnlyList<DeliveryMethod>>> GetDeliveryMethods()
+    {
+      return Ok(await _orderService.GetDeliveryMethodsAsync());
+    }
+
   }
 }
