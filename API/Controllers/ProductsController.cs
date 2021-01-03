@@ -14,20 +14,13 @@ namespace API.Controllers
 {
   public class ProductsController : BaseApiController
   {
-    private readonly IGenericRepository<Product> _productRepo;
-    private readonly IGenericRepository<ProductBrand> _productBrandRepo;
-    private readonly IGenericRepository<ProductType> _productTypeRepo;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public ProductsController(IGenericRepository<Product> productRepo,
-      IGenericRepository<ProductBrand> productBrandRepo,
-      IGenericRepository<ProductType> productTypeRepo,
-      IMapper mapper)
+    public ProductsController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-      _productRepo = productRepo;
-      _productTypeRepo = productTypeRepo;
       _mapper = mapper;
-      _productBrandRepo = productBrandRepo;
+      _unitOfWork = unitOfWork;
     }
 
     [HttpGet]
@@ -36,12 +29,13 @@ namespace API.Controllers
     {
       var spec = new ProductsWithTypesAndBrandsSpecification(productParams);
       var countSpec = new ProductWithFiltersForCountSpecification(productParams);
-      var totalItems = await _productRepo.CountAsync(countSpec);
-      var products = await _productRepo.ListAsync(spec);
+
+      var totalItems = await _unitOfWork.Repository<Product>().CountAsync(countSpec);
+      var products = await _unitOfWork.Repository<Product>().ListAsync(spec);
       var data = _mapper.Map<IReadOnlyList<Product>,
         IReadOnlyList<ProductToReturnDto>>(products);
 
-      return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex, 
+      return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex,
         productParams.PageSize, totalItems, data));
     }
 
@@ -51,7 +45,7 @@ namespace API.Controllers
     public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
     {
       var spec = new ProductsWithTypesAndBrandsSpecification(id);
-      var product = await _productRepo.GetEntityWithSpec(spec);
+      var product = await _unitOfWork.Repository<Product>().GetEntityWithSpec(spec);
       return product != null ? _mapper.Map<Product, ProductToReturnDto>(product)
         : NotFound(new ApiResponse(404));
     }
@@ -59,13 +53,13 @@ namespace API.Controllers
     [HttpGet("brands")]
     public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrands()
     {
-      return Ok(await _productBrandRepo.ListAllAsync());
+      return Ok(await _unitOfWork.Repository<ProductBrand>().ListAllAsync());
     }
 
     [HttpGet("types")]
     public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductTypes()
     {
-      return Ok(await _productTypeRepo.ListAllAsync());
+      return Ok(await _unitOfWork.Repository<ProductType>().ListAllAsync());
     }
   }
 }

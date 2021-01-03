@@ -5,8 +5,6 @@ using Core.Entities.OrderAggregate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using System.Linq;
-using System.Security.Claims;
 using API.Extensions;
 using API.Errors;
 using System.Collections.Generic;
